@@ -16,4 +16,4 @@ Inspired by → CuteMusic & CuteCalC by @sosauce
 
 This is the structure of the complete project:
 
-(https://raw.githubusercontent.com/ck-ya/cutetask/refs/heads/main/screenshots/structure.jpg)
+<img src="./screenshots/structure.jpg" alt="App Screenshot" width="400"/>
