@@ -1,0 +1,33 @@
+name: cutetask
+description: CuteTask, no bs task management app.
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  #i was planning to also add firebase real time sync but things got too complicated
+  #so i removed it for now
+  # :)
+
+  #firebase_core: ^3.1.0
+  #firebase_auth: ^5.1.0
+  #firebase_database: ^11.0.0
+  
+  shared_preferences: ^2.2.2
+  cupertino_icons: ^1.0.8
+  google_fonts: ^6.3.2
+  url_launcher: ^6.1.10
+  
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
