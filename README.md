@@ -16,4 +16,4 @@ Inspired by → CuteMusic & CuteCalC by @sosauce
 
 This is the structure of the complete project:
 
-(screenshots/structure.jpg)
+(https://raw.githubusercontent.com/ck-ya/cutetask/refs/heads/main/screenshots/structure.jpg)
