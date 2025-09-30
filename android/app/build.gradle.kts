@@ -6,6 +6,7 @@ plugins {
 }
 
 android {
+    namespace = "moe.ckya.cutetask"
     ndkVersion = "27.0.12077973"
     compileSdk = 33
     defaultConfig {
