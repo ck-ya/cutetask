@@ -6,7 +6,7 @@ A Productivity app built with flutter.
 ## About
 
 The original project, TaskFlow, sucked,  
-so using the same backend, created this with better UI.
+so I created this with better UI.
 
 Inspired by → CuteMusic & CuteCalC by @sosauce
 
