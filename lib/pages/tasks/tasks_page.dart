@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../models/task_model.dart';
-import '../../services/timer_service.dart';
 import '../../widgets/timer_display.dart';
 
 class TasksPage extends StatefulWidget {
@@ -21,14 +20,13 @@ class _TasksPageState extends State<TasksPage> {
   void initState() {
     super.initState();
     _loadTasks();
-    // Register the local setState as a callback for TimerService updates
-    TimerService().onUpdate = () => setState(() {});
+    // No need for TimerService().onUpdate, removed for ValueNotifier approach
   }
 
   @override
   void dispose() {
     _taskController.dispose();
-    TimerService().onUpdate = null; // Clean up the callback
+    // No need for TimerService().onUpdate cleanup
     super.dispose();
   }
 

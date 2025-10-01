@@ -16,12 +16,11 @@ class _ClockPageState extends State<ClockPage> {
   void initState() {
     super.initState();
     // Register the local setState as a callback for TimerService updates
-    TimerService().onUpdate = () => setState(() {});
+    // No need for onUpdate callback, use ValueListenableBuilder instead
   }
 
   @override
   void dispose() {
-    TimerService().onUpdate = null; // Clean up the callback
     super.dispose();
   }
 
@@ -101,42 +100,50 @@ class _ClockPageState extends State<ClockPage> {
           ),
         ),
         Expanded(
-          child: ListView.builder(
-            itemCount: TimerService().timers.length,
-            itemBuilder: (context, index) {
-              final timer = TimerService().timers[index];
-              return Card(
-                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                child: ListTile(
-                  title: Text(timer.name),
-                  subtitle: Text(_formatDuration(timer.duration)),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: Icon(
-                          TimerService().activeTimerId == timer.id &&
-                                  TimerService().isRunning
-                              ? Icons.pause
-                              : Icons.play_arrow,
-                        ),
-                        onPressed: () {
-                          if (TimerService().activeTimerId == timer.id &&
-                              TimerService().isRunning) {
-                            TimerService().stopTimer();
-                          } else {
-                            TimerService().startTimer(
-                                newId: timer.id, newDuration: timer.duration);
-                          }
-                        },
+          child: ValueListenableBuilder<List<TimerModel>>(
+            valueListenable: TimerService().timersNotifier,
+            builder: (context, timers, _) {
+              return ListView.builder(
+                itemCount: timers.length,
+                itemBuilder: (context, index) {
+                  final timer = timers[index];
+                  return Card(
+                    margin:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                    child: ListTile(
+                      title: Text(timer.name),
+                      subtitle: Text(_formatDuration(timer.duration)),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: Icon(
+                              TimerService().activeTimerId == timer.id &&
+                                      TimerService().isRunning
+                                  ? Icons.pause
+                                  : Icons.play_arrow,
+                            ),
+                            onPressed: () {
+                              if (TimerService().activeTimerId == timer.id &&
+                                  TimerService().isRunning) {
+                                TimerService().stopTimer();
+                              } else {
+                                TimerService().startTimer(
+                                    newId: timer.id,
+                                    newDuration: timer.duration);
+                              }
+                            },
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.delete),
+                            onPressed: () =>
+                                TimerService().deleteTimer(timer.id),
+                          ),
+                        ],
                       ),
-                      IconButton(
-                        icon: const Icon(Icons.delete),
-                        onPressed: () => TimerService().deleteTimer(timer.id),
-                      ),
-                    ],
-                  ),
-                ),
+                    ),
+                  );
+                },
               );
             },
           ),

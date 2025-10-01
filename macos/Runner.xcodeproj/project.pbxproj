@@ -15,7 +15,7 @@
 			);
 			dependencies = (
 			);
-			name = "Flutter Assemble";
+			33CC10ED2044A3C60003C045 /* CuteTask.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "CuteTask.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 			productName = FLX;
 		};
 /* End PBXAggregateTarget section */

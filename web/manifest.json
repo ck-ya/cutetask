@@ -1,6 +1,6 @@
 {
-    "name": "cute_task",
-    "short_name": "cute_task",
+    "name": "CuteTask",
+    "short_name": "CuteTask",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

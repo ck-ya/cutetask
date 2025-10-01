@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/foundation.dart';
 import '../models/timer_model.dart';
 
 class TimerService {
@@ -13,15 +14,16 @@ class TimerService {
   int timeLeft = 0;
   bool isRunning = false;
   Timer? timer;
-  List<TimerModel> timers = [];
-  Function? onUpdate; // Callback to notify listeners (e.g., Pages)
+  ValueNotifier<List<TimerModel>> timersNotifier = ValueNotifier([]);
+  List<TimerModel> get timers => timersNotifier.value;
 
   Future<void> loadTimers() async {
     final prefs = await SharedPreferences.getInstance();
     final timersJson = prefs.getString('custom_timers');
     if (timersJson != null) {
       final List<dynamic> decoded = jsonDecode(timersJson);
-      timers = decoded.map((e) => TimerModel.fromJson(e)).toList();
+      timersNotifier.value =
+          decoded.map((e) => TimerModel.fromJson(e)).toList();
     }
     activeTimerId = prefs.getString('active_timer_id');
     timeLeft = prefs.getInt('time_left') ?? 0;
@@ -40,7 +42,7 @@ class TimerService {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(
       'custom_timers',
-      jsonEncode(timers.map((e) => e.toJson()).toList()),
+      jsonEncode(timersNotifier.value.map((e) => e.toJson()).toList()),
     );
     await prefs.setString('active_timer_id', activeTimerId ?? '');
     await prefs.setInt('time_left', timeLeft);
@@ -48,31 +50,33 @@ class TimerService {
   }
 
   void addTimer(String name, int duration) {
-    timers.add(TimerModel(
+    final newTimers = List<TimerModel>.from(timersNotifier.value);
+    newTimers.add(TimerModel(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       name: name,
       duration: duration,
     ));
+    timersNotifier.value = newTimers;
     saveTimers();
-    onUpdate?.call();
   }
 
   void deleteTimer(String id) {
-    timers.removeWhere((t) => t.id == id);
+    final newTimers = List<TimerModel>.from(timersNotifier.value);
+    newTimers.removeWhere((t) => t.id == id);
+    timersNotifier.value = newTimers;
     if (activeTimerId == id) {
       activeTimerId = null;
       timeLeft = 0;
       stopTimer();
     }
     saveTimers();
-    onUpdate?.call();
   }
 
   void startTimer({String? newId, int? newDuration}) {
     if (newId != null) {
       activeTimerId = newId;
       timeLeft = newDuration ??
-          timers
+          timersNotifier.value
               .firstWhere((t) => t.id == newId,
                   orElse: () => TimerModel(id: '', name: '', duration: 0))
               .duration;
@@ -85,7 +89,7 @@ class TimerService {
     timer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (timeLeft > 0) {
         timeLeft--;
-        onUpdate?.call();
+        // timersNotifier.value assignment triggers listeners
         saveTimers();
       } else {
         stopTimer();
@@ -93,25 +97,25 @@ class TimerService {
       }
     });
     saveTimers();
-    onUpdate?.call();
+    // timersNotifier.value assignment triggers listeners
   }
 
   void stopTimer({bool shouldSave = true}) {
     timer?.cancel();
     isRunning = false;
-    onUpdate?.call();
+    // timersNotifier.value assignment triggers listeners
     if (shouldSave) saveTimers();
   }
 
   void resetTimer() {
     stopTimer();
     if (activeTimerId != null) {
-      timeLeft = timers
+      timeLeft = timersNotifier.value
           .firstWhere((t) => t.id == activeTimerId!,
               orElse: () => TimerModel(id: '', name: '', duration: 0))
           .duration;
     }
-    onUpdate?.call();
+    // timersNotifier.value assignment triggers listeners
     saveTimers();
   }
 
